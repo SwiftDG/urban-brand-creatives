@@ -3,25 +3,153 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-silver-black: #121214;
+  --color-purple-deep: #3b1f5e;
+  --color-purple-mid: #6b3fa0;
+  --color-purple-dark: #2a1245;
+  --color-purple-wash: #ede6f7;
+  --color-orange-red: #e8390e;
+  --color-orange-red-dark: #c82d08;
+  --color-off-white: #f7f7f9;
+  --color-silver: #a0a0a8;
+  --color-silver-light: #d4d4dc;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: var(--color-off-white);
+  --foreground: var(--color-black);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .container-content {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .container-content {
+      padding-inline: 80px;
+    }
+  }
+}
+
+/* Purple ambient glow orb */
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at center,
+    var(--color-purple-mid) 0%,
+    var(--color-purple-deep) 45%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: glow-pulse 8s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* Scroll-triggered reveal. Three variants give different element types their
+   own weight instead of one identical fade+translateY treatment everywhere:
+   headlines travel further and settle slower (more dramatic), media blocks
+   pair a small rise with a soft scale-in (depth cue), and the base/default
+   variant (body copy, cards, tags) stays quick and understated. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-headline {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+}
+
+.reveal-headline.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-media {
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-media.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Pulse/glow-in accent for GROW value letters, triggered once revealed */
+.letter-glow {
+  display: inline-block;
+}
+
+.reveal.is-visible .letter-glow {
+  animation: letter-glow-in 0.9s ease-out both;
+}
+
+@keyframes letter-glow-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    text-shadow: 0 0 0 rgba(232, 57, 14, 0);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.08);
+    text-shadow: 0 0 16px rgba(232, 57, 14, 0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(232, 57, 14, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-orb {
+    animation: none;
+  }
+
+  .reveal,
+  .reveal-headline,
+  .reveal-media {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .reveal.is-visible .letter-glow {
+    animation: none;
+    text-shadow: none;
   }
 }
